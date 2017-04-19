@@ -11,6 +11,10 @@ const {logger} = require('./utilities/logger');
 // these are custom errors we've created
 const {FooError, BarError, BizzError} = require('./errors');
 
+const {ALERT_FROM_EMAIL, ALERT_FROM_NAME, ALERT_TO_EMAIL} = process.env;
+
+const {sendEmail} = require('./emailer') ;
+
 const app = express();
 
 // this route handler randomly throws one of `FooError`,
@@ -27,15 +31,26 @@ app.use(morgan('common', {stream: logger.stream}));
 // for any GET request, we'll run our `russianRoulette` function
 app.get('*', russianRoulette);
 
-app.use
-// YOUR MIDDLEWARE FUNCTION should be activated here using
-// `app.use()`. It needs to come BEFORE the `app.use` call
-// below, which sends a 500 and error message to the client
+app.use((err, req, res, next) => {
+  const emailData = {
+    from: ALERT_FROM_EMAIL,
+    to: ALERT_TO_EMAIL,
+    subject: "Thinkful Error Success",
+    text: "It worked dude",
+    html: "<p>We're coding</p>"
+  };
+  sendEmail(emailData);
+  next(err, req, res, next);
+});
 
 app.use((err, req, res, next) => {
   logger.error(err);
-  res.status(500).json({error: 'Something went wrong'}).end();
+  res.status(500).json({error: 'Something went wrong '+err}).end();
 });
+
+// YOUR MIDDLEWARE FUNCTION should be activated here using
+// `app.use()`. It needs to come BEFORE the `app.use` call
+// below, which sends a 500 and error message to the client
 
 const port = process.env.PORT || 8080;
 

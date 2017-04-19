@@ -7,14 +7,6 @@ const {logger} = require('./utilities/logger');
 // etc. inside source code
 const {SMTP_URL} = process.env;
 
-const emailData = {
-  from: 'jeremy.webdevelopment@gmail.com',
-  to: 'jeremy.m.sutton@gmail.com',
-  subject: 'Server Error Challenge',
-  text: "There was an error thrown.",
-  html: "<h1>Successful Error Thrown</h1>"
-}
-
 // `emailData` is an object that looks like this:
 // {
 //  from: "foo@bar.com",
